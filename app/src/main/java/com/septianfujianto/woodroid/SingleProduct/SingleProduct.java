@@ -12,11 +12,12 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
+import com.septianfujianto.woodroid.Config;
 import com.septianfujianto.woodroid.Model.Products.Product;
-import com.septianfujianto.woodroid.Products.ProductsActivity;
 import com.septianfujianto.woodroid.R;
-import com.septianfujianto.woodroid.Services.IProductsServices;
+import com.septianfujianto.woodroid.Services.IWoocommerceServices;
 import com.septianfujianto.woodroid.Utils.SquaredImageView;
+import com.septianfujianto.woodroid.Utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -37,10 +38,12 @@ public class SingleProduct extends AppCompatActivity {
     protected TextView productTitle, productPrice, productWeight, productDesc, productCat, productTag;
     protected SquaredImageView featuredImage;
     protected Button btnAddToCart;
-    protected IProductsServices service;
+    protected IWoocommerceServices service;
     protected int productId;
     protected BasoProgressView basoProgressView;
     protected LinearLayout mainContent;
+    protected Map<String, Object> options;
+    protected Map<String, Object> parameters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,7 @@ public class SingleProduct extends AppCompatActivity {
             btnAddToCart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    getAllProducts();
                     Toast.makeText(view.getContext(), "ADD TO CART CLICKED", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -76,20 +80,22 @@ public class SingleProduct extends AppCompatActivity {
 
 
     public void getProductById(int productId) {
-        Map<String, String> parameters = new HashMap<>();
+        options = new HashMap<>();
+        parameters = new HashMap<>();
+
+        options.put("options[wp_api]", true);
+        options.put("options[version]", "wc/v1");
         parameters.put("parameters[page]", "1");
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://zucharest.16mb.com/")
+                .baseUrl(Config.SITE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        service = retrofit.create(IProductsServices.class);
-        Call<Product> call = service.getProductById(
-                "http://zucharest.16mb.com/",
-                "ck_d88c431a0c72079a8e47fb93485f05c43ccfe04d",
-                "cs_556ca0d25608e767fe7f74c7fea6060fae313999",
-                "products/"+productId
+        service = retrofit.create(IWoocommerceServices.class);
+        Call<Product> call = service.getItem(
+                Config.SITE_URL, Config.COSTUMER_KEY, Config.COSTUMER_SECRET,
+                options, "products/"+productId, parameters
         );
 
         mainContent.setVisibility(View.INVISIBLE);
@@ -128,6 +134,7 @@ public class SingleProduct extends AppCompatActivity {
 
                     bindResults(prodName, prodPrice, prodWeight,  prodDesc, prodCat ,  prodTag , prodFeaturedImage);
                 } else {
+                    basoProgressView.stopAndError("Oops, something wrong: "+response.raw());
                     System.out.println(response.raw());
                 }
             }
@@ -135,18 +142,22 @@ public class SingleProduct extends AppCompatActivity {
             @Override
             public void onFailure(Call<Product> call, Throwable t) {
                 t.printStackTrace();
+                basoProgressView.stopAndError("Oops, failure on: "+t.getMessage());
             }
         });
     }
 
     public void bindResults(String prodName, String prodPrice, String prodWeight,
                             String prodDesc, String prodCat , String prodTag , String prodFeaturedImage) {
+        String formattedPrice = Utils.formatCurrency(
+                Double.valueOf(prodPrice), Config.CURRENCY_SYMBOL,
+                Config.GROUPING_SPEARATOR, Config.DECIMAL_SEPARATOR);
 
         productTitle.setText(prodName);
         productCat.setText(prodCat);
         productDesc.setText(Html.fromHtml(prodDesc));
-        productPrice.setText(ProductsActivity.formatCurrency(Double.valueOf(prodPrice), "Rp ", ".", ","));
-        productWeight.setText(prodWeight+" gr");
+        productPrice.setText(formattedPrice);
+        productWeight.setText(prodWeight+ Config.WEIGHT_UNITS);
         productTag.setText(prodTag);
         Picasso.with(this)
                 .load(prodFeaturedImage)
@@ -158,8 +169,8 @@ public class SingleProduct extends AppCompatActivity {
     }
 
     public void getAllProducts(){
-        Map<String, Object> options = new HashMap<>();
-        Map<String, Object> parameters = new HashMap<>();
+        options = new HashMap<>();
+        parameters = new HashMap<>();
 
         options.put("options[wp_api]", true);
         options.put("options[version]", "wc/v1");
@@ -173,15 +184,15 @@ public class SingleProduct extends AppCompatActivity {
         httpClient.addInterceptor(logging);  // <-- this is the important line!
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://zucharest.16mb.com/")
+                .baseUrl(Config.SITE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(httpClient.build())
                 .build();
 
-        service = retrofit.create(IProductsServices.class);
+        service = retrofit.create(IWoocommerceServices.class);
 
 
-        Call<List<Product>> call = service.getAllProducts(
+        Call<List<Product>> call = service.getAllItems(
                 "http://zucharest.16mb.com/",
                 "ck_d88c431a0c72079a8e47fb93485f05c43ccfe04d",
                 "cs_556ca0d25608e767fe7f74c7fea6060fae313999",

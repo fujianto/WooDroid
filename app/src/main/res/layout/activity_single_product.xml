@@ -13,38 +13,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <id.gits.baso.BasoProgressView
+            android:id="@+id/baso_ProgressView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            app:baso_finishButtonText="Retry"
+            app:baso_finishSrcWidth="160dp"
+            app:baso_finishText="Something happened"
+            app:baso_finishTextSize="18sp"
+            app:baso_progressText="Loading..."/>
+
         <ScrollView
             android:id="@+id/scrollMain"
             android:layout_marginBottom="30dp"
             android:layout_alignParentTop="true"
             android:layout_below="@+id/staticBottomWrapper"
             android:layout_width="match_parent"
+            android:scrollbarStyle="outsideOverlay"
             android:layout_height="wrap_content">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingBottom="30dp"
+                android:id="@+id/mainContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
-                <id.gits.baso.BasoProgressView
-                    android:id="@+id/baso_ProgressView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    app:baso_finishButtonText="Retry"
-                    app:baso_finishSrcWidth="160dp"
-                    app:baso_finishText="Something happened"
-                    app:baso_finishTextSize="18sp"
-                    app:baso_progressText="Loading..."
-                />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:id="@+id/mainContent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/productTitle"
@@ -126,7 +122,6 @@
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="wrap_content"
-                        android:layout_marginBottom="20sp"
                         android:layout_height="wrap_content">
                         <TextView
                             android:text="@string/product_tag"
@@ -144,8 +139,9 @@
                             android:id="@+id/productTag"
                             android:textSize="14dp" />
                     </LinearLayout>
+
                 </LinearLayout>
-            </LinearLayout>
+
         </ScrollView>
 
         <LinearLayout

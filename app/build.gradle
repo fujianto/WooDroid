@@ -43,4 +43,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(':woocommerseandroidoauth1library')
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    compile 'com.github.franmontiel:PersistentCookieJar:v1.0.0'
 }

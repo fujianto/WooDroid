@@ -13,6 +13,13 @@ import java.net.URLEncoder;
  */
 
 public class Config {
+    public static final String SITE_URL = "http://zucharest.16mb.com";
+    public static final String CURRENCY_SYMBOL = "Rp ";
+    public static final char DECIMAL_SEPARATOR = ',';
+    public static final char GROUPING_SPEARATOR = '.';
+    public static final String WEIGHT_UNITS = " gr";
+    public static final String HEIGHT_UNITS = " cm";
+
     public static final String BASE_SITE = "zucharest.16mb.com";
     public static final String OAUTH_METHOD = "HMAC-SHA1";
     public static final String BASE_URL = "http://"+BASE_SITE+"/wp-json/wc/v1/products";

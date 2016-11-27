@@ -1,5 +1,6 @@
 package com.septianfujianto.woodroid.Main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.franmontiel.persistentcookiejar.ClearableCookieJar;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.septianfujianto.woodroid.Products.ProductsActivity;
@@ -16,14 +21,19 @@ import com.septianfujianto.woodroid.R;
 import com.septianfujianto.woodroid.Services.IOrderServices;
 
 import java.io.IOException;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.prefs.Preferences;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -32,8 +42,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     protected Button btnDefault, btnAuth;
-    protected IOrderServices service;
-
+    protected Context mContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +63,34 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(), "OAUTH TEST CLICk", Toast.LENGTH_SHORT).show();
-                testGetRequest();
+                testGetCookies();
+            }
+        });
+    }
+
+    public void testGetCookies() {
+        String url = "http://zucharest.16mb.com/?add-to-cart=44";
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                System.out.println("RESPONSE CODE: "+response.code());
+                System.out.println("RESPONSE Header: "+response.headers());
+
+                Log.i("HSXX ", response.headers().name(7));
+                Log.i("HSXX2 ", response.headers().value(7));
+                Log.i("HSXX ", response.headers().value(7));
             }
         });
     }

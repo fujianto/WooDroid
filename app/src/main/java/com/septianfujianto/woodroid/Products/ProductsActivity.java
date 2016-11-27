@@ -22,18 +22,15 @@ import android.widget.Toast;
 
 import com.septianfujianto.woodroid.Config;
 import com.septianfujianto.woodroid.Model.Products.Product;
-import com.septianfujianto.woodroid.Services.IProductsServices;
 import com.septianfujianto.woodroid.R;
-import com.woocommerse.OAuth1.services.HMACSha1SignatureService;
-import com.woocommerse.OAuth1.services.TimestampServiceImpl;
+import com.septianfujianto.woodroid.Services.IWoocommerceServices;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.gits.baso.BasoProgressView;
 import retrofit2.Call;
@@ -52,10 +49,12 @@ public class ProductsActivity extends AppCompatActivity
     protected GridLayoutManager layoutManager;
     int init_page = 1, per_page = 4, run_counter= 0;
     protected boolean loadMoreProduct = true;
-    IProductsServices service;
+    protected IWoocommerceServices service;
     protected SearchView searchView;
     protected Toolbar toolbar;
     protected SearchManager searchManager;
+    protected Map<String, Object> options = new HashMap<>();
+    protected Map<String, Object> parameters = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,27 +88,25 @@ public class ProductsActivity extends AppCompatActivity
         mProductRcv.setAdapter(adapter);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://"+Config.BASE_SITE+"/")
+                .baseUrl(Config.SITE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        service = retrofit.create(IProductsServices.class);
+        service = retrofit.create(IWoocommerceServices.class);
 
         handleSearchIntent(getIntent());
     }
 
     public void loadProducts(int page) {
-        final String nonce = new TimestampServiceImpl().getNonce();
-        final String timestamp = new TimestampServiceImpl().getTimestampInSeconds();
+        options.put("options[wp_api]", true);
+        options.put("options[version]", "wc/v1");
 
-        Call<List<Product>> call = service.getProducts(
-                "HMAC-SHA1",
-                Config.COSTUMER_KEY,
-                "1.0", timestamp,
-                nonce,
-                authenticatedLoadProductsRequest(Config.BASE_URL, nonce, timestamp, page, per_page),
-                page,
-                per_page
+        parameters.put("parameters[page]", init_page);
+        parameters.put("parameters[per_page]", per_page);
+
+        Call<List<Product>> call = service.getAllItems(
+                Config.SITE_URL, Config.COSTUMER_KEY, Config.COSTUMER_SECRET,
+                options, "products/", parameters
         );
 
         call.enqueue(new Callback<List<Product>>() {
@@ -117,33 +114,34 @@ public class ProductsActivity extends AppCompatActivity
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
                 basoProgressView.stopAndGone();
                 Log.e(" Response RAW ",String.valueOf(response.raw()));
+
                 if (response.isSuccessful()) {
                     listProducts.addAll(response.body());
                     adapter.notifyDataChanged();
                 } else {
-                    Log.e(" Response Error ",String.valueOf(response.code()));
+                    basoProgressView.stopAndError("Oops, something Wrong: "+String.valueOf(response.code()));
+                    Log.e("Response Error ", String.valueOf(response.code()));
                 }
             }
 
             @Override
             public void onFailure(Call<List<Product>> call, Throwable t) {
+                basoProgressView.stopAndError("Oops, something Wrong: "+t.getMessage());
                 t.printStackTrace();
             }
         });
     }
 
     public void loadMoreProducts(int page) {
-        final String nonce = new TimestampServiceImpl().getNonce();
-        final String timestamp = new TimestampServiceImpl().getTimestampInSeconds();
+        options.put("options[wp_api]", true);
+        options.put("options[version]", "wc/v1");
 
-        Call<List<Product>> call = service.getProducts(
-                "HMAC-SHA1",
-                Config.COSTUMER_KEY,
-                "1.0", timestamp,
-                nonce,
-                authenticatedLoadProductsRequest(Config.BASE_URL, nonce, timestamp, page, per_page),
-                page,
-                per_page
+        parameters.put("parameters[page]", page);
+        parameters.put("parameters[per_page]", per_page);
+
+        Call<List<Product>> call = service.getAllItems(
+                Config.SITE_URL, Config.COSTUMER_KEY, Config.COSTUMER_SECRET,
+                options, "products/", parameters
         );
 
         call.enqueue(new Callback<List<Product>>() {
@@ -173,15 +171,17 @@ public class ProductsActivity extends AppCompatActivity
     }
 
     public void searchProducts(String query) {
-        final String nonce = new TimestampServiceImpl().getNonce();
-        final String timestamp = new TimestampServiceImpl().getTimestampInSeconds();
-        Call<List<Product>> call = service.filterProducts(
-                "HMAC-SHA1",
-                Config.COSTUMER_KEY,
-                "1.0", timestamp,
-                nonce,
-                authenticatedFilterProductsRequest(Config.BASE_URL, nonce, timestamp, 1, per_page, query),
-                1, per_page, query);
+        options.put("options[wp_api]", true);
+        options.put("options[version]", "wc/v1");
+
+        parameters.put("parameters[page]", init_page);
+        parameters.put("parameters[per_page]", per_page);
+        parameters.put("parameters[search]", query);
+
+        Call<List<Product>> call = service.getAllItems(
+                Config.SITE_URL, Config.COSTUMER_KEY, Config.COSTUMER_SECRET,
+                options, "products/", parameters
+        );
 
         call.enqueue(new Callback<List<Product>>() {
             @Override
@@ -191,6 +191,7 @@ public class ProductsActivity extends AppCompatActivity
                 if (response.isSuccessful()) {
                     //clearData();
                     List<Product> result = response.body();
+
                     if(result.size() > 0) {
                         listProducts.addAll(result);
                     } else {
@@ -225,30 +226,6 @@ public class ProductsActivity extends AppCompatActivity
         }
     }
 
-    private String authenticatedLoadProductsRequest(String url, String nonce, String timestamp, int page, int per_page) {
-        String firstEncodedString = Config.METHOD+"&"+encodeUrl(url);
-        String parameterString = "oauth_consumer_key="+ Config.COSTUMER_KEY+"&oauth_nonce="+nonce+"&oauth_signature_method=HMAC-SHA1&oauth_timestamp="+timestamp+"&oauth_version=1.0&page="+page+"&per_page="+per_page;
-
-        String secoundEncodedString = "&"+encodeUrl(parameterString);
-        String baseString = firstEncodedString+secoundEncodedString;
-        String signature = new HMACSha1SignatureService().getSignature(baseString, Config.COSTUMER_SECRET, "");
-        String finalSignature = encodeUrl(signature);
-
-        return finalSignature;
-    }
-
-    private String authenticatedFilterProductsRequest(String url, String nonce, String timestamp, int page, int per_page, String search) {
-        String firstEncodedString = Config.METHOD+"&"+encodeUrl(url);
-        String parameterString = "oauth_consumer_key="+ Config.COSTUMER_KEY+"&oauth_nonce="+nonce+"&oauth_signature_method=HMAC-SHA1&oauth_timestamp="+timestamp+"&oauth_version=1.0&page="+page+"&per_page="+per_page+"&search="+search;
-
-        String secoundEncodedString = "&"+encodeUrl(parameterString);
-        String baseString = firstEncodedString+secoundEncodedString;
-        String signature = new HMACSha1SignatureService().getSignature(baseString, Config.COSTUMER_SECRET, "");
-        String finalSignature = encodeUrl(signature);
-
-        return finalSignature;
-    }
-
     @Override
     protected void onNewIntent(Intent intent) {
         handleSearchIntent(intent);
@@ -271,7 +248,10 @@ public class ProductsActivity extends AppCompatActivity
     }
 
     private void initProductsLoad() {
+        // Load the first batch of products
         loadProducts(init_page);
+
+        // Load next products batch when scrolled
         adapter.setLoadMoreListener(new ProductsAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -279,7 +259,7 @@ public class ProductsActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         int counter = run_counter++;
-                        Toast.makeText(mContext, "LOADMORE RUN "+counter, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "LOADMORE Batch "+counter, Toast.LENGTH_SHORT).show();
 
                         loadMoreProducts(1+init_page++);
                     }
@@ -299,19 +279,7 @@ public class ProductsActivity extends AppCompatActivity
         });
     }
 
-    public static String formatCurrency(Double money, String symbol, String groupingSep, String decimalSep) {
-        NumberFormat currencyInstance = NumberFormat.getCurrencyInstance();
-        DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-        dfs.setCurrencySymbol(symbol);
-        dfs.setGroupingSeparator('.');
-        dfs.setMonetaryDecimalSeparator('.');
-        ((DecimalFormat) currencyInstance).setDecimalFormatSymbols(dfs);
-
-        return currencyInstance.format(money);
-    }
-
-    public String encodeUrl(String url)
-    {
+    public String encodeUrl(String url) {
         String encodedurl = "";
         try {
 

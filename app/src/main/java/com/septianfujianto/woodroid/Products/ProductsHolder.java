@@ -5,9 +5,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.septianfujianto.woodroid.Config;
 import com.septianfujianto.woodroid.Model.Products.Product;
 import com.septianfujianto.woodroid.R;
 import com.septianfujianto.woodroid.Utils.SquaredImageView;
+import com.septianfujianto.woodroid.Utils.Utils;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -36,7 +38,9 @@ public class ProductsHolder extends RecyclerView.ViewHolder {
                 .placeholder(R.drawable.thumbnail)
                 .into(featuredImage);
         productTitle.setText(product.getName());
-        String formatedPrice = ProductsActivity.formatCurrency(Double.valueOf(product.getPrice()), "Rp ", ".", ",");
+        String formatedPrice = Utils.formatCurrency(
+                Double.valueOf(product.getPrice()), Config.CURRENCY_SYMBOL,
+                Config.GROUPING_SPEARATOR, Config.DECIMAL_SEPARATOR);
         productPrice.setText(formatedPrice);
     }
 }
