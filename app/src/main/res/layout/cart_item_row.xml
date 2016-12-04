@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:stretchColumns="*"
+    android:shrinkColumns="*"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TableRow
+        android:id="@+id/cartItemWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.septianfujianto.woodroid.Utils.SquaredImageView
+            android:src="@drawable/thumbnail"
+            android:background="@android:color/transparent"
+            android:id="@+id/cartImage"
+            android:layout_weight=".20"
+            android:layout_width="0dp"
+            android:layout_marginRight="10dp"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:layout_alignParentTop="true"
+            android:adjustViewBounds="false" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_weight=".40"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/cartItemTitle"
+                android:text="Item 1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="normal|bold"
+                android:textColor="?android:attr/textColorPrimary" />
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/cartItemPrice"
+                    android:text="$1000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:text=" x "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/cartItemQty"
+                    android:text="1 pcs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/cartItemSubtotal"
+            android:text="$2000"
+            android:layout_weight=".30"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight=".10"
+            android:layout_width="0dp">
+            <Button
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:background="@android:color/transparent"
+                android:drawableStart="@drawable/ic_menu_manage"
+                android:drawableLeft="@drawable/ic_menu_manage"
+                android:id="@+id/btnEdit"/>
+        </LinearLayout>
+    </TableRow>
+
+
+</TableLayout>

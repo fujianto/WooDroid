@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:stretchColumns="*"
+    android:shrinkColumns="*"
+    android:layout_height="match_parent">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_weight=".30"
+            android:padding="10dp"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/cardview_light_background"
+            android:text="Title"
+            android:id="@+id/tableDetailTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_weight=".70"
+            android:padding="10dp"
+            android:background="#f2f2f2"
+            android:text="Table Row Content"
+            android:id="@+id/tableDetailContent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+    </TableRow>
+</TableLayout >

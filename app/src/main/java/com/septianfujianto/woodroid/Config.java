@@ -19,6 +19,7 @@ public class Config {
     public static final char GROUPING_SPEARATOR = '.';
     public static final String WEIGHT_UNITS = " gr";
     public static final String HEIGHT_UNITS = " cm";
+    public static final String ITEM_UNITS = " pcs";
 
     public static final String BASE_SITE = "zucharest.16mb.com";
     public static final String OAUTH_METHOD = "HMAC-SHA1";

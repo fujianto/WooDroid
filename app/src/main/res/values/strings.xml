@@ -11,6 +11,7 @@
     <string name="product_name">Product Name</string>
     <string name="product_price">Price</string>
     <string name="add_cart">Add to Cart</string>
+    <string name="add_order">Order</string>
     <string name="product_category">Category:</string>
     <string name="product_tag">Tag:</string>
     <string name="products_desc_title">Description</string>

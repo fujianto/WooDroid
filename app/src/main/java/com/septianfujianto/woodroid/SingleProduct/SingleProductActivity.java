@@ -1,7 +1,10 @@
 package com.septianfujianto.woodroid.SingleProduct;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
@@ -10,32 +13,37 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.orhanobut.logger.Logger;
 import com.septianfujianto.woodroid.Config;
+import com.septianfujianto.woodroid.Model.Item;
 import com.septianfujianto.woodroid.Model.Products.Product;
+import com.septianfujianto.woodroid.Model.Realm.RealmHelper;
 import com.septianfujianto.woodroid.R;
 import com.septianfujianto.woodroid.Services.IWoocommerceServices;
+import com.septianfujianto.woodroid.SingleProduct.UI.ProductDetailTableAdapter;
 import com.septianfujianto.woodroid.Utils.SquaredImageView;
 import com.septianfujianto.woodroid.Utils.Utils;
 import com.squareup.picasso.Picasso;
+import com.woocommerse.OAuth1.services.TimestampServiceImpl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import id.gits.baso.BasoProgressView;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.septianfujianto.woodroid.Config.HEIGHT_UNITS;
+import static com.septianfujianto.woodroid.Config.WEIGHT_UNITS;
 
-public class SingleProduct extends AppCompatActivity {
-    protected TextView productTitle, productPrice, productWeight, productDesc, productCat, productTag;
+
+public class SingleProductActivity extends AppCompatActivity {
+    private Context mContext;
+    protected TextView productTitle, productPrice, productDesc;
     protected SquaredImageView featuredImage;
     protected Button btnAddToCart;
     protected IWoocommerceServices service;
@@ -44,6 +52,18 @@ public class SingleProduct extends AppCompatActivity {
     protected LinearLayout mainContent;
     protected Map<String, Object> options;
     protected Map<String, Object> parameters;
+    protected ArrayList<Item> tableData;
+    private ProductDetailTableAdapter adapter;
+    private LinearLayoutManager manager;
+    private RecyclerView mTableDetailRcv;
+    private Realm realm;
+    private String prodName;
+    private String prodPrice;
+    private String prodWeight;
+    private int prodQty;
+    private String prodDesc;
+    private String prodFeaturedImage;
+    private RealmHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,35 +71,60 @@ public class SingleProduct extends AppCompatActivity {
         setContentView(R.layout.activity_single_product);
         getSupportActionBar().setTitle("Product Detail");
 
+        mContext = this;
         productTitle = (TextView) findViewById(R.id.productTitle);
-        productCat = (TextView) findViewById(R.id.productCat);
         productDesc = (TextView) findViewById(R.id.productDesc);
         productPrice = (TextView) findViewById(R.id.productPrice);
-        productWeight = (TextView) findViewById(R.id.productWeight);
-        productTag = (TextView) findViewById(R.id.productTag);
         featuredImage = (SquaredImageView) findViewById(R.id.featuredImage);
         btnAddToCart = (Button) findViewById(R.id.btnAddToCart);
         basoProgressView = (BasoProgressView) findViewById(R.id.baso_ProgressView);
         mainContent = (LinearLayout)  findViewById(R.id.mainContent);
+        mTableDetailRcv = (RecyclerView) findViewById(R.id.rcv_table_detail);
+        helper = new RealmHelper(this);
 
         Bundle extras = getIntent().getExtras();
 
+        btnAddToCart.setVisibility(View.INVISIBLE);
+
         if (extras != null) {
+            tableData = new ArrayList<>();
+            adapter = new ProductDetailTableAdapter(this, tableData);
+            manager = new LinearLayoutManager(this);
+            mTableDetailRcv.setHasFixedSize(true);
+            mTableDetailRcv.setAdapter(adapter);
+            mTableDetailRcv.setLayoutManager(manager);
+
             productId = extras.getInt("productId");
             getProductById(productId);
 
             btnAddToCart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getAllProducts();
-                    Toast.makeText(view.getContext(), "ADD TO CART CLICKED", Toast.LENGTH_SHORT).show();
+                    addToCart();
                 }
             });
         }
     }
 
+    private void addToCart() {
+        Toast.makeText(mContext, prodName+" Added to Cart "+"prodId="+productId+"prodprice="+prodPrice+"prodQty=1"+"prodPrice="+prodPrice, Toast.LENGTH_SHORT).show();
+        int itemSize = 0;
 
-    public void getProductById(int productId) {
+        if (helper.getCartItemsByProductId(productId) != null) {
+            itemSize = helper.getCartItemsByProductId(productId).size();
+            System.out.println("Size by ID: " + itemSize);
+        }
+
+        if (itemSize > 0) {
+            int newQty = Integer.valueOf(helper.getCartItemsByProductId(productId).get(0).getProductQty()) + 1;
+            helper.updateCartItemByProductId(productId, null, newQty, null);
+        } else {
+            helper.addItemToCart(new TimestampServiceImpl().getNonce(), "0", productId, prodName, 1, Double.valueOf(prodPrice), prodFeaturedImage);
+        }
+
+    }
+
+    private void getProductById(int productId) {
         options = new HashMap<>();
         parameters = new HashMap<>();
 
@@ -108,12 +153,12 @@ public class SingleProduct extends AppCompatActivity {
                 basoProgressView.stopAndGone();
                 mainContent.setVisibility(View.VISIBLE);
 
-                if (response.code() == 200) {
-                    String prodName = response.body().getName();
-                    String prodPrice = response.body().getPrice();
-                    String prodWeight = response.body().getWeight();
-                    String prodDesc = response.body().getDescription();
-                    String prodFeaturedImage = response.body().getImages().get(0).getSrc();
+                if (response.isSuccessful()) {
+                    prodName = response.body().getName();
+                    prodPrice = response.body().getPrice();
+                    prodWeight = response.body().getWeight();
+                    prodDesc = response.body().getDescription();
+                    prodFeaturedImage = response.body().getImages().get(0).getSrc();
 
                     int prodCatSize = response.body().getCategories().size();
                     String[] cat = new String[prodCatSize];
@@ -132,7 +177,26 @@ public class SingleProduct extends AppCompatActivity {
                     String prodCat = TextUtils.join(",", cat);
                     String prodTag = TextUtils.join(",", tag);
 
-                    bindResults(prodName, prodPrice, prodWeight,  prodDesc, prodCat ,  prodTag , prodFeaturedImage);
+                    btnAddToCart.setVisibility(View.VISIBLE);
+                    bindResults(prodName, prodPrice, prodWeight,  prodDesc, prodFeaturedImage);
+
+                    /* Bind Data to Product detail table*/
+                    prodQty = 1;
+
+                    tableData.add(new Item("Quantity", String.valueOf(prodQty)+" pcs"));
+                    tableData.add(new Item("Weight", response.body().getWeight()+" "+WEIGHT_UNITS));
+
+                    if (response.body().getDimensions().getLength() != "") {
+                        tableData.add(new Item("Length", response.body().getDimensions().getLength()+" "+HEIGHT_UNITS));
+                        tableData.add(new Item("Width", response.body().getDimensions().getWidth()+" "+HEIGHT_UNITS));
+                        tableData.add(new Item("Height", response.body().getDimensions().getHeight()+" "+HEIGHT_UNITS));
+                    }
+
+                    tableData.add(new Item("Date Modified", response.body().getDateModified()));
+                    tableData.add(new Item("Categories", prodCat));
+                    tableData.add(new Item("Tags", prodTag));
+                    adapter.notifyDataSetChanged();
+
                 } else {
                     basoProgressView.stopAndError("Oops, something wrong: "+response.raw());
                     System.out.println(response.raw());
@@ -147,77 +211,20 @@ public class SingleProduct extends AppCompatActivity {
         });
     }
 
-    public void bindResults(String prodName, String prodPrice, String prodWeight,
-                            String prodDesc, String prodCat , String prodTag , String prodFeaturedImage) {
+    private void bindResults(String prodName, String prodPrice, String prodWeight, String prodDesc, String prodFeaturedImage) {
         String formattedPrice = Utils.formatCurrency(
                 Double.valueOf(prodPrice), Config.CURRENCY_SYMBOL,
                 Config.GROUPING_SPEARATOR, Config.DECIMAL_SEPARATOR);
 
         productTitle.setText(prodName);
-        productCat.setText(prodCat);
         productDesc.setText(Html.fromHtml(prodDesc));
         productPrice.setText(formattedPrice);
-        productWeight.setText(prodWeight+ Config.WEIGHT_UNITS);
-        productTag.setText(prodTag);
         Picasso.with(this)
                 .load(prodFeaturedImage)
                 .placeholder(R.drawable.thumbnail)
                 .into(featuredImage);
 
-
         getSupportActionBar().setTitle(prodName);
-    }
-
-    public void getAllProducts(){
-        options = new HashMap<>();
-        parameters = new HashMap<>();
-
-        options.put("options[wp_api]", true);
-        options.put("options[version]", "wc/v1");
-
-        parameters.put("parameters[page]", 3);
-        parameters.put("parameters[per_page]", 2);
-
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(logging);  // <-- this is the important line!
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Config.SITE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(httpClient.build())
-                .build();
-
-        service = retrofit.create(IWoocommerceServices.class);
-
-
-        Call<List<Product>> call = service.getAllItems(
-                "http://zucharest.16mb.com/",
-                "ck_d88c431a0c72079a8e47fb93485f05c43ccfe04d",
-                "cs_556ca0d25608e767fe7f74c7fea6060fae313999",
-                options, "products/", parameters
-        );
-
-        call.enqueue(new Callback<List<Product>>() {
-            @Override
-            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                System.out.println(response.body());
-                if(response.code() == 200) {
-                    Gson gson = new Gson();
-                    Logger.json(gson.toJson(response.body()));
-
-                    for(int i = 0; i < response.body().size(); i++) {
-                        System.out.println(response.body().get(i).getName());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Product>> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
     }
 }
 

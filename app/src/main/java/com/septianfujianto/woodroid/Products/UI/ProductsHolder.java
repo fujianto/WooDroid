@@ -1,4 +1,4 @@
-package com.septianfujianto.woodroid.Products;
+package com.septianfujianto.woodroid.Products.UI;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.septianfujianto.woodroid.SingleProduct.SingleProduct">
+    tools:context="com.septianfujianto.woodroid.SingleProduct.SingleProductActivity">
 
     <RelativeLayout
         android:id="@+id/mainWrapper"
@@ -48,6 +48,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="@string/product_name"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textStyle="normal|bold"
                         android:textSize="20dp" />
 
@@ -56,19 +57,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10sp">
-                            <TextView
-                                android:text="$1000"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/productPrice"
-                                android:layout_marginRight="20sp"
-                                android:textSize="13sp" />
-
                         <TextView
-                            android:text="1000 gr"
+                            android:text="$1000"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/productWeight"
+                            android:id="@+id/productPrice"
+                            android:layout_marginRight="20sp"
                             android:textSize="13sp" />
                     </LinearLayout>
 
@@ -94,52 +88,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/productDesc"
-                        android:layout_marginBottom="10sp"
+                        android:layout_marginBottom="5sp"
                         android:textSize="14dp" />
 
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="wrap_content"
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rcv_table_detail"
+                        android:layout_width="match_parent"
+                        android:layout_marginBottom="20sp"
                         android:layout_height="wrap_content">
-                        <TextView
-                            android:text="@string/product_category"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/productCatTitle"
-                            android:textStyle="bold"
-                            android:layout_marginRight="10sp"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:text="Cat 1, Cat2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/productCat"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:text="@string/product_tag"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/productTagTitle"
-                            android:textStyle="bold"
-                            android:layout_marginRight="10sp"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:text="Tag 1, Tag 2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/productTag"
-                            android:textSize="14dp" />
-                    </LinearLayout>
-
+                    </android.support.v7.widget.RecyclerView>
                 </LinearLayout>
 
         </ScrollView>

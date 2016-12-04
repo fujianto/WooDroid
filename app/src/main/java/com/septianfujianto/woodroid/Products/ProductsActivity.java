@@ -3,7 +3,10 @@ package com.septianfujianto.woodroid.Products;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -22,8 +25,11 @@ import android.widget.Toast;
 
 import com.septianfujianto.woodroid.Config;
 import com.septianfujianto.woodroid.Model.Products.Product;
+import com.septianfujianto.woodroid.Model.Realm.RealmHelper;
+import com.septianfujianto.woodroid.Products.UI.ProductsAdapter;
 import com.septianfujianto.woodroid.R;
 import com.septianfujianto.woodroid.Services.IWoocommerceServices;
+import com.septianfujianto.woodroid.ShoppingCart.ShoppingCart;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -55,6 +61,8 @@ public class ProductsActivity extends AppCompatActivity
     protected SearchManager searchManager;
     protected Map<String, Object> options = new HashMap<>();
     protected Map<String, Object> parameters = new HashMap<>();
+    private FloatingActionButton fab;
+    private RealmHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +80,22 @@ public class ProductsActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        helper = new RealmHelper(this);
+
+        if (helper.getAllCartItems().size() <= 0) {
+            fab.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
+        } else {
+            fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        }
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(mContext, ShoppingCart.class));
+            }
+        });
 
         basoProgressView = (BasoProgressView) findViewById(R.id.baso_ProgressView);
         basoProgressView.startProgress();
@@ -126,7 +150,7 @@ public class ProductsActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<List<Product>> call, Throwable t) {
-                basoProgressView.stopAndError("Oops, something Wrong: "+t.getMessage());
+                basoProgressView.stopAndError(t.getMessage());
                 t.printStackTrace();
             }
         });
@@ -170,7 +194,7 @@ public class ProductsActivity extends AppCompatActivity
         });
     }
 
-    public void searchProducts(String query) {
+    private void searchProducts(String query) {
         options.put("options[wp_api]", true);
         options.put("options[version]", "wc/v1");
 

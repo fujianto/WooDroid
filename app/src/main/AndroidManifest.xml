@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".WoodroidApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -35,8 +36,12 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:parentActivityName=".Products.ProductsActivity"
-            android:name=".SingleProduct.SingleProduct">
+            android:name=".SingleProduct.SingleProductActivity"
+            android:parentActivityName=".Products.ProductsActivity"></activity>
+        <activity android:name=".ShoppingCart.ShoppingCart">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
     </application>
 
