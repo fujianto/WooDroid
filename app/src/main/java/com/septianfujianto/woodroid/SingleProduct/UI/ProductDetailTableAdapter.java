@@ -20,7 +20,6 @@ public class ProductDetailTableAdapter extends RecyclerView.Adapter<RecyclerView
     private Context context;
 
     public ProductDetailTableAdapter(Context context, ArrayList<Item> tableData){
-        System.out.println(tableData.size());
         this.context = context;
         this.tableData = tableData;
     }

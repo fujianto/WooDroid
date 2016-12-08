@@ -7,12 +7,19 @@ import com.septianfujianto.woodroid.Config;
 import com.septianfujianto.woodroid.Utils.Utils;
 import com.woocommerse.OAuth1.services.TimestampServiceImpl;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import io.realm.RealmModel;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static com.septianfujianto.woodroid.R.id.totalPrices;
 
 /**
@@ -30,10 +37,10 @@ public class RealmHelper {
         this.mContext = mContext;
     }
 
-    public void addItemToCart(String cartId, String customerId, int productId, String productName, int productQty, Double productPrice, String productImage) {
+    public void addItemToCart(String customerId, int productId, String productName, int productStock, int productQty, Double productPrice, String productImage) {
         cart = new Cart();
 
-        cart.setCart(cartId, customerId, productId, productName, productQty, productPrice);
+        cart.setCart(customerId, productId, productName, productStock, productQty, productPrice);
         cart.setProductImage(productImage);
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(cart);
@@ -45,6 +52,12 @@ public class RealmHelper {
         cartResults.sort("productId", Sort.DESCENDING);
 
         return cartResults;
+    }
+
+    public RealmResults<RealmModel> getAllRealmItems(Class obj) {
+        RealmResults results = realm.where(obj).findAll();
+
+        return results;
     }
 
     public RealmResults<Cart> getCartItemsByProductId(int productId) {
@@ -106,6 +119,22 @@ public class RealmHelper {
 
         } else {
             return Double.valueOf(0);
+        }
+    }
+
+    public void addtoRealmFromJsonRajaongkir(String jsonResult, Class modelClass) {
+        try {
+            JSONObject obj = new JSONObject(jsonResult);
+            JSONArray jsonArray = obj.getJSONObject("rajaongkir").getJSONArray("results");
+            realm.beginTransaction();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                realm.createOrUpdateObjectFromJson(modelClass, jsonArray.get(i).toString());
+            }
+
+            realm.commitTransaction();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

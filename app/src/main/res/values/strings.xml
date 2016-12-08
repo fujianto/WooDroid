@@ -16,4 +16,6 @@
     <string name="product_tag">Tag:</string>
     <string name="products_desc_title">Description</string>
     <string name="product_desc">Short product description</string>
+    <string name="checkout_title">Checkout</string>
+    <string name="place_order">Place Order</string>
 </resources>

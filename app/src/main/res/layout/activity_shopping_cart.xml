@@ -8,24 +8,15 @@
     tools:context="com.septianfujianto.woodroid.ShoppingCart.ShoppingCart">
 
     <ScrollView
-        android:layout_marginBottom="50dp"
         android:id="@+id/mainScroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <LinearLayout
-            android:orientation="vertical"
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rcv_cart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <android.support.v7.widget.RecyclerView
-                android:layout_marginBottom="30dp"
-                android:id="@+id/rcv_cart"
-                android:layout_width="match_parent"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:layout_height="wrap_content">
-            </android.support.v7.widget.RecyclerView>
-        </LinearLayout>
+        </android.support.v7.widget.RecyclerView>
     </ScrollView>
 
     <LinearLayout

@@ -8,21 +8,22 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.septianfujianto.woodroid.SingleProduct.SingleProductActivity">
 
+    <id.gits.baso.BasoProgressView
+        android:id="@+id/baso_ProgressView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        app:baso_finishButtonText="Retry"
+        app:baso_finishSrcWidth="160dp"
+        app:baso_finishText="Something happened"
+        app:baso_finishTextSize="18sp"
+        app:baso_progressText="Loading..."/>
+
     <RelativeLayout
         android:id="@+id/mainWrapper"
+        android:layout_above="@id/baso_ProgressView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <id.gits.baso.BasoProgressView
-            android:id="@+id/baso_ProgressView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            app:baso_finishButtonText="Retry"
-            app:baso_finishSrcWidth="160dp"
-            app:baso_finishText="Something happened"
-            app:baso_finishTextSize="18sp"
-            app:baso_progressText="Loading..."/>
 
         <ScrollView
             android:id="@+id/scrollMain"

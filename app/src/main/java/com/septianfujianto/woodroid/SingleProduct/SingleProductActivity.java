@@ -1,14 +1,20 @@
 package com.septianfujianto.woodroid.SingleProduct;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,7 +47,7 @@ import static com.septianfujianto.woodroid.Config.HEIGHT_UNITS;
 import static com.septianfujianto.woodroid.Config.WEIGHT_UNITS;
 
 
-public class SingleProductActivity extends AppCompatActivity {
+public class SingleProductActivity extends AppCompatActivity implements View.OnClickListener {
     private Context mContext;
     protected TextView productTitle, productPrice, productDesc;
     protected SquaredImageView featuredImage;
@@ -56,14 +62,16 @@ public class SingleProductActivity extends AppCompatActivity {
     private ProductDetailTableAdapter adapter;
     private LinearLayoutManager manager;
     private RecyclerView mTableDetailRcv;
-    private Realm realm;
     private String prodName;
     private String prodPrice;
     private String prodWeight;
-    private int prodQty;
+    private int prodStock;
     private String prodDesc;
     private String prodFeaturedImage;
     private RealmHelper helper;
+    private EditText edtQty;
+    private View alertView;
+    private View.OnClickListener onClickListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +88,7 @@ public class SingleProductActivity extends AppCompatActivity {
         basoProgressView = (BasoProgressView) findViewById(R.id.baso_ProgressView);
         mainContent = (LinearLayout)  findViewById(R.id.mainContent);
         mTableDetailRcv = (RecyclerView) findViewById(R.id.rcv_table_detail);
+        onClickListener = this;
         helper = new RealmHelper(this);
 
         Bundle extras = getIntent().getExtras();
@@ -100,28 +109,70 @@ public class SingleProductActivity extends AppCompatActivity {
             btnAddToCart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    addToCart();
+                    if( prodStock <= 0) {
+                        Toast.makeText(mContext, "Product out of stocks.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        addToCart();
+                    }
                 }
             });
         }
     }
 
     private void addToCart() {
-        Toast.makeText(mContext, prodName+" Added to Cart "+"prodId="+productId+"prodprice="+prodPrice+"prodQty=1"+"prodPrice="+prodPrice, Toast.LENGTH_SHORT).show();
-        int itemSize = 0;
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("How many item would you like?");
+        alert.setMessage("Enter item quantity below");
+        LayoutInflater inflater = this.getLayoutInflater();
+        alertView = inflater.inflate(R.layout.layout_dialog_quantity, null);
+        edtQty = (EditText) alertView.findViewById(R.id.dialogItemQty);
+        alert.setView(alertView);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                insertItemToCart();
+            }
+        });
+
+        alert.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                });
+
+        alert.show();
+    }
+
+    private void insertItemToCart() {
+        int itemSize;
+        int inputQty = Integer.valueOf(edtQty.getText().toString());
 
         if (helper.getCartItemsByProductId(productId) != null) {
             itemSize = helper.getCartItemsByProductId(productId).size();
-            System.out.println("Size by ID: " + itemSize);
-        }
+            int itemInCartQty = helper.getCartItemsByProductId(productId).get(0).getProductQty();
 
-        if (itemSize > 0) {
-            int newQty = Integer.valueOf(helper.getCartItemsByProductId(productId).get(0).getProductQty()) + 1;
-            helper.updateCartItemByProductId(productId, null, newQty, null);
-        } else {
-            helper.addItemToCart(new TimestampServiceImpl().getNonce(), "0", productId, prodName, 1, Double.valueOf(prodPrice), prodFeaturedImage);
-        }
+            if (itemSize > 0) {
+                int qty = inputQty + itemInCartQty;
 
+                if (prodStock < inputQty + itemInCartQty){
+                    Toast.makeText(mContext, "You want "+inputQty+", You already have "+itemInCartQty+" pcs in your cart. " +
+                            "Item stocks is "+prodStock+" pcs.", Toast.LENGTH_SHORT).show();
+                } else {
+                    helper.updateCartItemByProductId(productId, null, qty, null);
+                    Toast.makeText(mContext, edtQty.getText()+" "+prodName+" updated to Cart", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        else {
+            if (inputQty < 0) {
+                Toast.makeText(mContext, "Item quantity must be filled.", Toast.LENGTH_SHORT).show();
+            } else if(prodStock < inputQty) {
+                Toast.makeText(mContext, "You want "+inputQty+", unfortunately only "+prodStock+" "+prodName+" left.", Toast.LENGTH_SHORT).show();
+            } else {
+                helper.addItemToCart("0", productId, prodName, prodStock, inputQty, Double.valueOf(prodPrice), prodFeaturedImage);
+                Toast.makeText(mContext, edtQty.getText()+" "+prodName+" added to Cart", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void getProductById(int productId) {
@@ -181,9 +232,14 @@ public class SingleProductActivity extends AppCompatActivity {
                     bindResults(prodName, prodPrice, prodWeight,  prodDesc, prodFeaturedImage);
 
                     /* Bind Data to Product detail table*/
-                    prodQty = 1;
+                    prodStock = response.body().getStockQuantity();
 
-                    tableData.add(new Item("Quantity", String.valueOf(prodQty)+" pcs"));
+                    if ( prodStock <= 0) {
+                        btnAddToCart.setText("Out of Stocks");
+                        btnAddToCart.setBackgroundColor(Color.GRAY);
+                    }
+
+                    tableData.add(new Item("Stocks", String.valueOf(prodStock)+" pcs"));
                     tableData.add(new Item("Weight", response.body().getWeight()+" "+WEIGHT_UNITS));
 
                     if (response.body().getDimensions().getLength() != "") {
@@ -199,6 +255,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
                 } else {
                     basoProgressView.stopAndError("Oops, something wrong: "+response.raw());
+                    basoProgressView.setOnButtonClickListener(onClickListener);
                     System.out.println(response.raw());
                 }
             }
@@ -207,6 +264,7 @@ public class SingleProductActivity extends AppCompatActivity {
             public void onFailure(Call<Product> call, Throwable t) {
                 t.printStackTrace();
                 basoProgressView.stopAndError("Oops, failure on: "+t.getMessage());
+                basoProgressView.setOnButtonClickListener(onClickListener);
             }
         });
     }
@@ -225,6 +283,12 @@ public class SingleProductActivity extends AppCompatActivity {
                 .into(featuredImage);
 
         getSupportActionBar().setTitle(prodName);
+    }
+
+    @Override
+    public void onClick(View view) {
+        basoProgressView.startProgress();
+        getProductById(productId);
     }
 }
 

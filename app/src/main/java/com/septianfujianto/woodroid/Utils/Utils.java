@@ -1,5 +1,17 @@
 package com.septianfujianto.woodroid.Utils;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.septianfujianto.woodroid.Model.Realm.RealmHelper;
+import com.septianfujianto.woodroid.R;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -27,7 +39,7 @@ public class Utils {
 
         Double sum = Double.valueOf(0);
         for(Double i: list)
-            sum = sum+i;
+            sum = sum + i;
 
         return sum;
     }

@@ -21,10 +21,9 @@ public class Config {
     public static final String HEIGHT_UNITS = " cm";
     public static final String ITEM_UNITS = " pcs";
 
-    public static final String BASE_SITE = "zucharest.16mb.com";
-    public static final String OAUTH_METHOD = "HMAC-SHA1";
-    public static final String BASE_URL = "http://"+BASE_SITE+"/wp-json/wc/v1/products";
+    /* API KEY */
+    public static final String RAJAONGKIR_STARTER_URL = "http://api.rajaongkir.com/starter/";
+    public static final String RAJAONGKIR_KEY = "eedde9700e3d5bf8bfdf5abc673f21d2";
     public static final String COSTUMER_KEY = "ck_d88c431a0c72079a8e47fb93485f05c43ccfe04d";
     public static final String COSTUMER_SECRET = "cs_556ca0d25608e767fe7f74c7fea6060fae313999";
-    public static final String METHOD = "GET";//change API method eg POST,PUT, DELETE etc (ONLY FOR THIS EXAMPLE FOR LIB LIKE RETROFIT,OKHTTP, The Are Dynamic Way)
 }

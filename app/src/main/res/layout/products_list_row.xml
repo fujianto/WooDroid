@@ -35,11 +35,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Product itle"
+                    android:text="Product Title"
                     android:id="@+id/productTitle"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
-                    android:textSize="18sp"
+                    android:textSize="15sp"
                     android:textColor="?android:attr/textColorPrimary" />
 
                 <TextView

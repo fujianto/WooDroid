@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:layout_weight=".30"
+            android:layout_weight=".40"
             android:padding="10dp"
             android:background="@color/colorPrimary"
             android:textColor="@color/cardview_light_background"
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:layout_weight=".70"
+            android:layout_weight=".60"
             android:padding="10dp"
             android:background="#f2f2f2"
             android:text="Table Row Content"

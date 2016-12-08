@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/delete_cart"
-        android:title="Delete Cart" />
-    <item android:id="@+id/refresh_cart"
-        android:title="Refresh Cart" />
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:title="Delete Cart"/>
+
+    <!--<item android:id="@+id/showMenu"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_more"
+        android:title="Show Menu">
+        <menu>
+            <item android:id="@+id/delete_cart"
+                android:icon="@android:drawable/ic_delete"
+                android:title="Delete Cart"/>
+
+            <item android:id="@+id/refresh_cart"
+                android:title="Refresh Cart">
+            </item>
+        </menu>
+    </item>-->
 </menu>

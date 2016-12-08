@@ -1,5 +1,7 @@
 package com.septianfujianto.woodroid.Model.Realm;
 
+import android.support.annotation.NonNull;
+
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -11,11 +13,20 @@ import io.realm.annotations.PrimaryKey;
 public class Cart extends RealmObject {
     @PrimaryKey
     private int productId;
-    private String cartId;
-    private String customerId, productName;
+    private String customerId;
+    private String productName;
     private String productImage;
+    private int productStock;
     private int productQty;
-    private Double productPrice, subtotal;
+    private Double productPrice;
+
+    public int getProductStock() {
+        return productStock;
+    }
+
+    public void setProductStock(int productStock) {
+        this.productStock = productStock;
+    }
 
     public String getProductImage() {
         return productImage;
@@ -23,14 +34,6 @@ public class Cart extends RealmObject {
 
     public void setProductImage(String productImage) {
         this.productImage = productImage;
-    }
-
-    public String getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(String cartId) {
-        this.cartId = cartId;
     }
 
     public String getCustomerId() {
@@ -73,21 +76,13 @@ public class Cart extends RealmObject {
         this.productPrice = productPrice;
     }
 
-    public Double getSubtotal() {
-        return subtotal;
-    }
-
-    public void setSubtotal(Double subtotal) {
-        this.subtotal = subtotal;
-    }
-
-    public void setCart(String cartId, String customerId, int productId, String productName, int productQty, Double productPrice) {
-        this.cartId = cartId;
+    public void setCart(String customerId, int productId, String productName, int productStock, int productQty, Double productPrice) {
         this.customerId = customerId;
         this.productId = productId;
         this.productName = productName;
         this.productQty = productQty;
         this.productPrice = productPrice;
+        this.productStock = productStock;
     }
 
 

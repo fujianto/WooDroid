@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,10 +22,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.septianfujianto.woodroid.Config;
 import com.septianfujianto.woodroid.Model.Products.Product;
+import com.septianfujianto.woodroid.Model.Realm.Cart;
 import com.septianfujianto.woodroid.Model.Realm.RealmHelper;
 import com.septianfujianto.woodroid.Products.UI.ProductsAdapter;
 import com.septianfujianto.woodroid.R;
@@ -37,8 +41,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import id.gits.baso.BasoProgressView;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,7 +54,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProductsActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, BasoProgressView.OnClickListener {
     private RecyclerView mProductRcv;
     private Context mContext;
     private List<Product> listProducts;
@@ -63,6 +71,8 @@ public class ProductsActivity extends AppCompatActivity
     protected Map<String, Object> parameters = new HashMap<>();
     private FloatingActionButton fab;
     private RealmHelper helper;
+    private View.OnClickListener onClickListener;
+    protected Button mStoppedButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,39 +81,16 @@ public class ProductsActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Latest Product");
         setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        helper = new RealmHelper(this);
-
-        if (helper.getAllCartItems().size() <= 0) {
-            fab.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
-        } else {
-            fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
-        }
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(mContext, ShoppingCart.class));
-            }
-        });
+        setupDrawerNavigation();
 
         basoProgressView = (BasoProgressView) findViewById(R.id.baso_ProgressView);
+        mStoppedButton = (Button) findViewById(id.gits.baso.R.id.baso_StoppedButton);
         basoProgressView.startProgress();
 
+        onClickListener = this;
         mContext = this;
         mProductRcv = (RecyclerView) findViewById(R.id.rcv_product);
         listProducts = new ArrayList<>();
-
         adapter = new ProductsAdapter(this, listProducts);
 
         mProductRcv.setHasFixedSize(true);
@@ -119,13 +106,71 @@ public class ProductsActivity extends AppCompatActivity
         service = retrofit.create(IWoocommerceServices.class);
 
         handleSearchIntent(getIntent());
+        setupFloatingCartButton();
+    }
+
+    @Override
+    public void onClick(View view) {
+        basoProgressView.startProgress();
+        /*Toast.makeText(view.getContext(), "Reload", Toast.LENGTH_SHORT).show();*/
+        loadProducts(init_page);
+    }
+
+    private void setupDrawerNavigation() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void setupFloatingCartButton() {
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        helper = new RealmHelper(this);
+        final RealmResults<Cart> realmResults = helper.getAllCartItems();
+
+        if (realmResults.size() < 1) {
+            fab.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
+        } else {
+            fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        }
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(mContext, ShoppingCart.class));
+            }
+        });
+
+        fab.post(new Runnable() {
+            @Override
+            public void run() {
+                int cartSize = realmResults.size();
+                System.out.println("CARTSIZECREAT: "+cartSize);
+
+                realmResults.addChangeListener(new RealmChangeListener<RealmResults<Cart>>() {
+                    @Override
+                    public void onChange(RealmResults<Cart> element) {
+                        System.out.println("Something changed: "+element.size());
+                        if (element.size() < 1) {
+                            fab.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
+                        } else {
+                            fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+                        }
+                    }
+                });
+            }
+        });
     }
 
     public void loadProducts(int page) {
         options.put("options[wp_api]", true);
         options.put("options[version]", "wc/v1");
 
-        parameters.put("parameters[page]", init_page);
+        parameters.put("parameters[page]", page);
         parameters.put("parameters[per_page]", per_page);
 
         Call<List<Product>> call = service.getAllItems(
@@ -136,14 +181,15 @@ public class ProductsActivity extends AppCompatActivity
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                basoProgressView.stopAndGone();
                 Log.e(" Response RAW ",String.valueOf(response.raw()));
 
                 if (response.isSuccessful()) {
+                    basoProgressView.stopAndGone();
                     listProducts.addAll(response.body());
                     adapter.notifyDataChanged();
                 } else {
                     basoProgressView.stopAndError("Oops, something Wrong: "+String.valueOf(response.code()));
+                    basoProgressView.setOnButtonClickListener(onClickListener);
                     Log.e("Response Error ", String.valueOf(response.code()));
                 }
             }
@@ -151,6 +197,7 @@ public class ProductsActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<List<Product>> call, Throwable t) {
                 basoProgressView.stopAndError(t.getMessage());
+                basoProgressView.setOnButtonClickListener(onClickListener);
                 t.printStackTrace();
             }
         });
@@ -301,18 +348,6 @@ public class ProductsActivity extends AppCompatActivity
                 Toast.makeText(v.getContext(), "Retry CLICKED", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    public String encodeUrl(String url) {
-        String encodedurl = "";
-        try {
-
-            encodedurl = URLEncoder.encode(url,"UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        return encodedurl;
     }
 
     @Override
