@@ -14,6 +14,20 @@ public class Province extends RealmObject {
     private String province;
     private RealmList<City> cities;
 
+    public Province() {
+
+    }
+
+    public Province(int province_id, String province) {
+        this.province_id = province_id;
+        this.province = province;
+    }
+
+    @Override
+    public String toString() {
+        return province;
+    }
+
     public RealmList<City> getCities() {
         return cities;
     }

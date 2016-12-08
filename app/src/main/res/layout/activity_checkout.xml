@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_checkout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,42 +11,145 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.septianfujianto.woodroid.Checkout.CheckoutActivity">
 
-    <TextView
-        android:text="@string/checkout_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerInParent="true"
-        android:id="@+id/checkOutTitle"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="?android:attr/textColorPrimary"
-        android:layout_below="@+id/billingDetailWrapper" />
-
-    <LinearLayout
-        android:id="@+id/billingDetailWrapper"
-        android:layout_marginTop="40sp"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-        <EditText
-            android:hint="Name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:id="@+id/areaBottomWrapper"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <Button
-            android:text="@string/place_order"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/checkout_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:id="@+id/checkOutTitle"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_below="@+id/billingDetailWrapper" />
+
+            <LinearLayout
+                android:id="@+id/billingDetailWrapper"
+                android:layout_marginTop="40sp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="@string/first_name"
+                        android:id="@+id/firstName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="@string/last_name"
+                        android:id="@+id/lastName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="@string/email_address"
+                        android:id="@+id/emailAddress"
+                        android:inputType="textEmailAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="@string/your_phone"
+                        android:id="@+id/phoneNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="@string/your_address"
+                        android:id="@+id/address"
+                        android:inputType="textMultiLine"
+                        android:lines="5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="@string/your_postcode"
+                        android:id="@+id/postalCode"
+                        android:inputType="number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    android:layout_marginTop="10sp"
+                    android:layout_marginBottom="10sp"
+                    app:hintText="@string/your_province"
+                    android:id="@+id/listProvince"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    android:layout_marginTop="10sp"
+                    android:layout_marginBottom="10sp"
+                    app:hintText="@string/your_city"
+                    android:id="@+id/listCity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:hint="@string/order_notes"
+                    android:id="@+id/orderNotes"
+                    android:inputType="textMultiLine"
+                    android:lines="5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <LinearLayout
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical"
+                android:id="@+id/areaBottomWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:text="@string/place_order"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
     </LinearLayout>
+
+    </ScrollView>
 </RelativeLayout>

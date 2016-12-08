@@ -54,7 +54,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Checkout.CheckoutActivity">
+        <activity android:name=".Checkout.CheckoutActivity"
+            android:parentActivityName=".ShoppingCart.ShoppingCart">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

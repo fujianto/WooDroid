@@ -18,4 +18,15 @@
     <string name="product_desc">Short product description</string>
     <string name="checkout_title">Checkout</string>
     <string name="place_order">Place Order</string>
+    <string name="your_name">Your name</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="email_address">Email address</string>
+    <string name="your_phone">Phone</string>
+    <string name="your_country">Country</string>
+    <string name="your_address">Address</string>
+    <string name="your_province">Province</string>
+    <string name="your_postcode">Postcode / ZIP</string>
+    <string name="your_city">Town / City</string>
+    <string name="order_notes">Order Notes</string>
 </resources>
