@@ -24,6 +24,8 @@ public class Config {
     /* API KEY */
     public static final String RAJAONGKIR_STARTER_URL = "http://api.rajaongkir.com/starter/";
     public static final String RAJAONGKIR_KEY = "eedde9700e3d5bf8bfdf5abc673f21d2";
+    public static final String DEFAULT_COURIER = "jne"; // "jne", "tiki", "pos"
+    public static final int ORIGIN_CITY_ID = 152; // Jakarta Pusat
     public static final String COSTUMER_KEY = "ck_d88c431a0c72079a8e47fb93485f05c43ccfe04d";
     public static final String COSTUMER_SECRET = "cs_556ca0d25608e767fe7f74c7fea6060fae313999";
 }

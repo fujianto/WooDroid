@@ -18,7 +18,16 @@ public class Cart extends RealmObject {
     private String productImage;
     private int productStock;
     private int productQty;
+    private int productWeight;
     private Double productPrice;
+
+    public int getProductWeight() {
+        return productWeight;
+    }
+
+    public void setProductWeight(int productWeight) {
+        this.productWeight = productWeight;
+    }
 
     public int getProductStock() {
         return productStock;

@@ -57,5 +57,12 @@ public class WoodroidMigration implements RealmMigration {
 
             oldVersion++;
         }
+
+        if (oldVersion == 4) {
+            RealmObjectSchema cartSchema = schema.get("Cart");
+            cartSchema.addField("productWeight", int.class);
+
+            oldVersion++;
+        }
     }
 }

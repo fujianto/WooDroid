@@ -2,7 +2,6 @@ package com.septianfujianto.woodroid.Main;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,53 +9,29 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.franmontiel.persistentcookiejar.ClearableCookieJar;
-import com.franmontiel.persistentcookiejar.PersistentCookieJar;
-import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
-import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
-import com.septianfujianto.woodroid.Model.Realm.Cart;
 import com.septianfujianto.woodroid.Model.Realm.City;
 import com.septianfujianto.woodroid.Model.Realm.Province;
 import com.septianfujianto.woodroid.Products.ProductsActivity;
 import com.septianfujianto.woodroid.R;
-import com.septianfujianto.woodroid.Services.IOrderServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.sql.Wrapper;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.prefs.Preferences;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.facebook.stetho.inspector.network.PrettyPrinterDisplayType.JSON;
 import static com.septianfujianto.woodroid.Config.RAJAONGKIR_KEY;
-import static okhttp3.Protocol.get;
 
 
 public class MainActivity extends AppCompatActivity {

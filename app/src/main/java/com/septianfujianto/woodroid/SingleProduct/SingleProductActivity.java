@@ -64,7 +64,7 @@ public class SingleProductActivity extends AppCompatActivity implements View.OnC
     private RecyclerView mTableDetailRcv;
     private String prodName;
     private String prodPrice;
-    private String prodWeight;
+    private int prodWeight;
     private int prodStock;
     private String prodDesc;
     private String prodFeaturedImage;
@@ -145,7 +145,7 @@ public class SingleProductActivity extends AppCompatActivity implements View.OnC
 
     private void insertItemToCart() {
         int itemSize;
-        int inputQty = Integer.valueOf(edtQty.getText().toString());
+        int inputQty = (edtQty.getText().toString() != null) ? Integer.valueOf(edtQty.getText().toString()) : 0;
 
         if (helper.getCartItemsByProductId(productId) != null) {
             itemSize = helper.getCartItemsByProductId(productId).size();
@@ -169,7 +169,7 @@ public class SingleProductActivity extends AppCompatActivity implements View.OnC
             } else if(prodStock < inputQty) {
                 Toast.makeText(mContext, "You want "+inputQty+", unfortunately only "+prodStock+" "+prodName+" left.", Toast.LENGTH_SHORT).show();
             } else {
-                helper.addItemToCart("0", productId, prodName, prodStock, inputQty, Double.valueOf(prodPrice), prodFeaturedImage);
+                helper.addItemToCart("0", productId, prodName, prodStock, prodWeight,inputQty, Double.valueOf(prodPrice), prodFeaturedImage);
                 Toast.makeText(mContext, edtQty.getText()+" "+prodName+" added to Cart", Toast.LENGTH_SHORT).show();
             }
         }
@@ -207,7 +207,7 @@ public class SingleProductActivity extends AppCompatActivity implements View.OnC
                 if (response.isSuccessful()) {
                     prodName = response.body().getName();
                     prodPrice = response.body().getPrice();
-                    prodWeight = response.body().getWeight();
+                    prodWeight = Integer.valueOf(response.body().getWeight());
                     prodDesc = response.body().getDescription();
                     prodFeaturedImage = response.body().getImages().get(0).getSrc();
 
@@ -269,7 +269,7 @@ public class SingleProductActivity extends AppCompatActivity implements View.OnC
         });
     }
 
-    private void bindResults(String prodName, String prodPrice, String prodWeight, String prodDesc, String prodFeaturedImage) {
+    private void bindResults(String prodName, String prodPrice, int prodWeight, String prodDesc, String prodFeaturedImage) {
         String formattedPrice = Utils.formatCurrency(
                 Double.valueOf(prodPrice), Config.CURRENCY_SYMBOL,
                 Config.GROUPING_SPEARATOR, Config.DECIMAL_SEPARATOR);

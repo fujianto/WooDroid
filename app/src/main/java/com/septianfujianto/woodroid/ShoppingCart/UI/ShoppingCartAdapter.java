@@ -57,7 +57,6 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
     public void onBindViewHolder(final ShoppingCartHolder holder, int position) {
         Picasso.with(context)
                 .load(cart.get(holder.getAdapterPosition()).getProductImage())
-                .placeholder(R.drawable.thumbnail)
                 .into(holder.cartImage);
 
         holder.itemName.setText(cart.get(holder.getAdapterPosition()).getProductName());
@@ -155,7 +154,7 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
 
                 if (helper.getCartItemsByProductId(cartItem.getProductId()) != null) {
                     itemSize = helper.getCartItemsByProductId(cartItem.getProductId()).size();
-                    int inputQty = Integer.valueOf(edtQty.getText().toString());
+                    int inputQty = (edtQty.getText().toString() != null) ? Integer.valueOf(edtQty.getText().toString()) : 0;
                     int prodStock = cartItem.getProductStock();
 
                     if (itemSize > 0) {

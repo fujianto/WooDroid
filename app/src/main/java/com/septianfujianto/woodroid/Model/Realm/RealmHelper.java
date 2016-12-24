@@ -37,11 +37,13 @@ public class RealmHelper {
         this.mContext = mContext;
     }
 
-    public void addItemToCart(String customerId, int productId, String productName, int productStock, int productQty, Double productPrice, String productImage) {
+    public void addItemToCart(String customerId, int productId, String productName, int productStock, int productWeight,
+                              int productQty, Double productPrice, String productImage) {
         cart = new Cart();
 
         cart.setCart(customerId, productId, productName, productStock, productQty, productPrice);
         cart.setProductImage(productImage);
+        cart.setProductWeight(productWeight);
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(cart);
         realm.commitTransaction();
@@ -116,6 +118,22 @@ public class RealmHelper {
             }
 
             return Utils.sumList(subtotal);
+
+        } else {
+            return Double.valueOf(0);
+        }
+    }
+
+    public Double getCartTotalWeight(){
+        RealmResults<Cart> realmResults = realm.where(Cart.class).findAll();
+        if (realmResults.size() > 0) {
+            ArrayList<Double> totalWeight = new ArrayList<>();
+
+            for (int i = 0; i < realmResults.size(); i++) {
+                totalWeight.add(Double.valueOf(realmResults.get(i).getProductWeight() * realmResults.get(i).getProductQty()));
+            }
+
+            return Utils.sumList(totalWeight);
 
         } else {
             return Double.valueOf(0);

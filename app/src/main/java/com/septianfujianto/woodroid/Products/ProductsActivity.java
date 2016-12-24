@@ -53,6 +53,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.septianfujianto.woodroid.Config.COSTUMER_KEY;
+import static com.septianfujianto.woodroid.Config.COSTUMER_SECRET;
+import static com.septianfujianto.woodroid.Config.SITE_URL;
+
 public class ProductsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, BasoProgressView.OnClickListener {
     private RecyclerView mProductRcv;
@@ -99,7 +103,7 @@ public class ProductsActivity extends AppCompatActivity
         mProductRcv.setAdapter(adapter);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Config.SITE_URL)
+                .baseUrl(SITE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -112,7 +116,6 @@ public class ProductsActivity extends AppCompatActivity
     @Override
     public void onClick(View view) {
         basoProgressView.startProgress();
-        /*Toast.makeText(view.getContext(), "Reload", Toast.LENGTH_SHORT).show();*/
         loadProducts(init_page);
     }
 
@@ -174,24 +177,20 @@ public class ProductsActivity extends AppCompatActivity
         parameters.put("parameters[per_page]", per_page);
 
         Call<List<Product>> call = service.getAllItems(
-                Config.SITE_URL, Config.COSTUMER_KEY, Config.COSTUMER_SECRET,
+                SITE_URL, COSTUMER_KEY, COSTUMER_SECRET,
                 options, "products/", parameters
         );
 
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                Log.e(" Response RAW ",String.valueOf(response.raw()));
-
                 if (response.isSuccessful()) {
                     basoProgressView.stopAndGone();
                     listProducts.addAll(response.body());
                     adapter.notifyDataChanged();
                 } else {
                     basoProgressView.stopAndError("Oops, something Wrong: "+String.valueOf(response.code()));
-                    basoProgressView.setOnButtonClickListener(onClickListener);
-                    Log.e("Response Error ", String.valueOf(response.code()));
-                }
+                    basoProgressView.setOnButtonClickListener(onClickListener);}
             }
 
             @Override
@@ -211,7 +210,7 @@ public class ProductsActivity extends AppCompatActivity
         parameters.put("parameters[per_page]", per_page);
 
         Call<List<Product>> call = service.getAllItems(
-                Config.SITE_URL, Config.COSTUMER_KEY, Config.COSTUMER_SECRET,
+                SITE_URL, COSTUMER_KEY, COSTUMER_SECRET,
                 options, "products/", parameters
         );
 
@@ -250,7 +249,7 @@ public class ProductsActivity extends AppCompatActivity
         parameters.put("parameters[search]", query);
 
         Call<List<Product>> call = service.getAllItems(
-                Config.SITE_URL, Config.COSTUMER_KEY, Config.COSTUMER_SECRET,
+                SITE_URL, COSTUMER_KEY, COSTUMER_SECRET,
                 options, "products/", parameters
         );
 

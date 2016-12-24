@@ -29,4 +29,15 @@
     <string name="your_postcode">Postcode / ZIP</string>
     <string name="your_city">Town / City</string>
     <string name="order_notes">Order Notes</string>
+    <string name="msg_first_name">First name must be filled</string>
+    <string name="msg_last_name">Last name must be filled</string>
+    <string name="msg_email">Please enter correct Email address</string>
+    <string name="msg_phone_number">Phone number must be filled</string>
+    <string name="msg_address">Address must be filled</string>
+    <string name="msg_province">Please select your provinces</string>
+    <string name="msg_city">Please select your city</string>
+    <string name="msg_shipping">Please select your Shipping method</string>
+    <string name="msg_postalcode">Postal code must be filled</string>
+    <string name="courier_options">Courier Options</string>
+    <string name="msg_courier">Select shipping Courier</string>
 </resources>
