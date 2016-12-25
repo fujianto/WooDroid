@@ -90,7 +90,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/productDesc"
                         android:layout_marginBottom="5sp"
-                        android:textSize="14dp" />
+                        android:textSize="16sp" />
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rcv_table_detail"

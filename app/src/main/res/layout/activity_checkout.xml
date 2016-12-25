@@ -234,6 +234,8 @@
                 <Button
                     android:id="@+id/btnPlaceOrder"
                     android:text="@string/place_order"
+                    android:background="#f00000"
+                    android:textColor="#fff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>

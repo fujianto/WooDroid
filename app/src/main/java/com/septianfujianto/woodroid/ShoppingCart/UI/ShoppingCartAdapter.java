@@ -203,7 +203,6 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         public TextView itemName, itemPrice, itemQty, subtotal;
         public Button btnEdit;
         public Button btnEditCart;
-        public TableRow cartItemWrapper;
 
         public ShoppingCartHolder(View itemView) {
             super(itemView);
@@ -215,7 +214,6 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
             itemQty = (TextView) itemView.findViewById(R.id.cartItemQty);
             subtotal = (TextView) itemView.findViewById(R.id.cartItemSubtotal);
             btnEdit = (Button) itemView.findViewById(R.id.btnEdit);
-            cartItemWrapper = (TableRow) itemView.findViewById(R.id.cartItemWrapper);
         }
     }
 }

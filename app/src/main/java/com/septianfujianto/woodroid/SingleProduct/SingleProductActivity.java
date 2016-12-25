@@ -2,7 +2,7 @@ package com.septianfujianto.woodroid.SingleProduct;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -25,18 +25,17 @@ import com.septianfujianto.woodroid.Model.Products.Product;
 import com.septianfujianto.woodroid.Model.Realm.RealmHelper;
 import com.septianfujianto.woodroid.R;
 import com.septianfujianto.woodroid.Services.IWoocommerceServices;
+import com.septianfujianto.woodroid.ShoppingCart.ShoppingCartActivity;
 import com.septianfujianto.woodroid.SingleProduct.UI.ProductDetailTableAdapter;
 import com.septianfujianto.woodroid.Utils.SquaredImageView;
 import com.septianfujianto.woodroid.Utils.Utils;
 import com.squareup.picasso.Picasso;
-import com.woocommerse.OAuth1.services.TimestampServiceImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import id.gits.baso.BasoProgressView;
-import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -145,7 +144,8 @@ public class SingleProductActivity extends AppCompatActivity implements View.OnC
 
     private void insertItemToCart() {
         int itemSize;
-        int inputQty = (edtQty.getText().toString() != null) ? Integer.valueOf(edtQty.getText().toString()) : 0;
+        String inputQtyDialog = edtQty.getText().toString();
+        int inputQty = (!TextUtils.equals(inputQtyDialog, "") ? Integer.valueOf(inputQtyDialog) : 0);
 
         if (helper.getCartItemsByProductId(productId) != null) {
             itemSize = helper.getCartItemsByProductId(productId).size();
@@ -159,20 +159,41 @@ public class SingleProductActivity extends AppCompatActivity implements View.OnC
                             "Item stocks is "+prodStock+" pcs.", Toast.LENGTH_SHORT).show();
                 } else {
                     helper.updateCartItemByProductId(productId, null, qty, null);
-                    Toast.makeText(mContext, edtQty.getText()+" "+prodName+" updated to Cart", Toast.LENGTH_SHORT).show();
+                    dialogAfterAddToCart(edtQty.getText()+" "+prodName+" updated to Cart");
                 }
             }
         }
         else {
-            if (inputQty < 0) {
+            if (inputQty <= 0) {
                 Toast.makeText(mContext, "Item quantity must be filled.", Toast.LENGTH_SHORT).show();
             } else if(prodStock < inputQty) {
                 Toast.makeText(mContext, "You want "+inputQty+", unfortunately only "+prodStock+" "+prodName+" left.", Toast.LENGTH_SHORT).show();
             } else {
                 helper.addItemToCart("0", productId, prodName, prodStock, prodWeight,inputQty, Double.valueOf(prodPrice), prodFeaturedImage);
-                Toast.makeText(mContext, edtQty.getText()+" "+prodName+" added to Cart", Toast.LENGTH_SHORT).show();
+                dialogAfterAddToCart(edtQty.getText()+" "+prodName+" added to Cart");
             }
         }
+    }
+
+    private void dialogAfterAddToCart(String message) {
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Cart Updated");
+        alert.setMessage(message);
+        alert.setPositiveButton("Checkout Order", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                startActivity(new Intent(mContext, ShoppingCartActivity.class));
+            }
+        });
+
+        alert.setNegativeButton("Continue Shopping", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        alert.show();
     }
 
     private void getProductById(int productId) {
@@ -256,7 +277,6 @@ public class SingleProductActivity extends AppCompatActivity implements View.OnC
                 } else {
                     basoProgressView.stopAndError("Oops, something wrong: "+response.raw());
                     basoProgressView.setOnButtonClickListener(onClickListener);
-                    System.out.println(response.raw());
                 }
             }
 

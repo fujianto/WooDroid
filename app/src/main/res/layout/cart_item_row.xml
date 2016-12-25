@@ -1,92 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:stretchColumns="*"
     android:shrinkColumns="*"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/card_view"
-        android:padding="5sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent">
 
-        <TableRow
-            android:id="@+id/cartItemWrapper"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <com.septianfujianto.woodroid.Utils.SquaredImageView
                 android:background="@android:color/transparent"
                 android:id="@+id/cartImage"
-                android:layout_weight=".20"
-                android:layout_width="0dp"
-                android:layout_marginRight="10dp"
+                android:layout_width="70sp"
+                android:layout_marginRight="10sp"
+                android:src="@android:drawable/gallery_thumb"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
                 android:layout_alignParentTop="true"
-                android:adjustViewBounds="false" />
+                android:layout_alignParentLeft="true"
+                android:adjustViewBounds="true" />
 
             <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_weight=".70"
+                android:id="@+id/contentWrapper"
+                android:layout_toRightOf="@id/cartImage"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/cartItemTitle"
-                    android:text="Item 1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="normal|bold"
-                    android:textColor="?android:attr/textColorPrimary" />
-
                 <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_weight=".90"
                     android:layout_height="wrap_content">
+
                     <TextView
-                        android:id="@+id/cartItemPrice"
-                        android:text="$1000"
+                        android:id="@+id/cartItemTitle"
+                        android:text="Item 1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp" />
+                        android:textStyle="normal|bold"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/cartItemPrice"
+                            android:text="$1000"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:text="  @  "
+                            android:textSize="12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/cartItemQty"
+                            android:text="1 pcs"
+                            android:textSize="12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
 
                     <TextView
-                        android:text="  @  "
+                        android:id="@+id/cartItemSubtotal"
+                        android:text="$2000"
                         android:textSize="12sp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/cartItemQty"
-                        android:text="1 pcs"
-                        android:textSize="12sp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/cartItemSubtotal"
-                    android:text="$2000"
-                    android:textSize="12sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_weight=".10"
-                android:layout_width="0dp">
                 <Button
+                    android:layout_width="0dp"
+                    android:layout_weight=".10"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
                     android:background="@android:color/transparent"
-                    android:drawableStart="@drawable/ic_menu_manage"
-                    android:drawableLeft="@drawable/ic_menu_manage"
+                    android:drawableStart="@android:drawable/ic_menu_edit"
+                    android:drawableLeft="@android:drawable/ic_menu_edit"
                     android:id="@+id/btnEdit"/>
             </LinearLayout>
-        </TableRow>
+        </RelativeLayout>
     </android.support.v7.widget.CardView>
-
-</TableLayout>
+</RelativeLayout>

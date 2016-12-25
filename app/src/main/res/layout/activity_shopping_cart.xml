@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.septianfujianto.woodroid.ShoppingCart.ShoppingCart">
+    tools:context="com.septianfujianto.woodroid.ShoppingCart.ShoppingCartActivity">
 
     <ScrollView
         android:id="@+id/mainScroll"
@@ -14,6 +14,7 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rcv_cart"
+            android:clipToPadding="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </android.support.v7.widget.RecyclerView>

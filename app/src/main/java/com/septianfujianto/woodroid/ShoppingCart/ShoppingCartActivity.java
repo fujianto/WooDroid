@@ -40,7 +40,7 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
-public class ShoppingCart extends AppCompatActivity implements ShoppingCartAdapter.Callbacks, View.OnClickListener {
+public class ShoppingCartActivity extends AppCompatActivity implements ShoppingCartAdapter.Callbacks, View.OnClickListener {
     private RealmResults<Cart> results;
     private RecyclerView rcvCart;
     private RealmHelper helper;
@@ -63,6 +63,10 @@ public class ShoppingCart extends AppCompatActivity implements ShoppingCartAdapt
         context = this;
 
         getSupportActionBar().setTitle("Checkout");
+
+        if (helper.getAllCartItems().size() <= 0) {
+            btnOrder.setVisibility(View.INVISIBLE);
+        }
 
         setUpRecyclerView();
         setUpTotalAmount();

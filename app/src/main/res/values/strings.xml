@@ -40,4 +40,5 @@
     <string name="msg_postalcode">Postal code must be filled</string>
     <string name="courier_options">Courier Options</string>
     <string name="msg_courier">Select shipping Courier</string>
+    <string name="confirmation_detail">After succesfully completing order, please send us your Transaction ID, your name, bank account number and the amount of money transfered to our email address: mystore@droid.com.</string>
 </resources>

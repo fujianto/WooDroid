@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,27 +21,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.septianfujianto.woodroid.Config;
+import com.septianfujianto.woodroid.Checkout.CheckoutActivity;
+import com.septianfujianto.woodroid.Confirmation.PaymentConfirmationActivity;
 import com.septianfujianto.woodroid.Model.Products.Product;
 import com.septianfujianto.woodroid.Model.Realm.Cart;
 import com.septianfujianto.woodroid.Model.Realm.RealmHelper;
 import com.septianfujianto.woodroid.Products.UI.ProductsAdapter;
 import com.septianfujianto.woodroid.R;
 import com.septianfujianto.woodroid.Services.IWoocommerceServices;
-import com.septianfujianto.woodroid.ShoppingCart.ShoppingCart;
+import com.septianfujianto.woodroid.ShoppingCart.ShoppingCartActivity;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 import id.gits.baso.BasoProgressView;
 import io.realm.RealmChangeListener;
@@ -144,7 +139,7 @@ public class ProductsActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(mContext, ShoppingCart.class));
+                startActivity(new Intent(mContext, ShoppingCartActivity.class));
             }
         });
 
@@ -256,7 +251,6 @@ public class ProductsActivity extends AppCompatActivity
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                Log.e(" Response  ", response.raw().toString());
                 basoProgressView.stopAndGone();
                 if (response.isSuccessful()) {
                     //clearData();
@@ -305,12 +299,10 @@ public class ProductsActivity extends AppCompatActivity
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
 
-            if (query.length() > 3) {
-                Toast.makeText(mContext, "Searching for "+query, Toast.LENGTH_SHORT).show();
-                toolbar.setTitle("Searching for "+query);
-                clearData();
-                searchProducts(query);
-            }
+            Toast.makeText(mContext, "Searching for "+query, Toast.LENGTH_SHORT).show();
+            toolbar.setTitle("Searching for "+query);
+            clearData();
+            searchProducts(query);
 
         } else {
             initProductsLoad();
@@ -395,19 +387,14 @@ public class ProductsActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+       if (id == R.id.nav_cart) {
+           startActivity(new Intent(mContext, ShoppingCartActivity.class));
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
+        } else if (id == R.id.nav_checkout) {
+           startActivity(new Intent(mContext, CheckoutActivity.class));
+        } else if (id == R.id.nav_confirm_payment) {
+           startActivity(new Intent(mContext, PaymentConfirmationActivity.class));
+       }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

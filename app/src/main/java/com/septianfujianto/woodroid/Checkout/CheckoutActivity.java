@@ -120,6 +120,11 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
         getSupportActionBar().setTitle("Order");
         setupSpinner();
 
+        if (helper.getAllCartItems().size() <= 0) {
+            getSupportActionBar().setTitle("No item in Cart, Add one first.");
+            btnOrder.setVisibility(View.INVISIBLE);
+        }
+
         btnOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -238,6 +243,7 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void setupSpinner() {
+        //TODO: 12/24/2016  Need to debug Spinner for Province, City and Courier
         provinces = realm.where(Province.class).findAll();
         provinces.sort("province_id", Sort.ASCENDING);
         List<String> pList = new ArrayList<>();
